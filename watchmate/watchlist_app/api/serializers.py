@@ -16,6 +16,7 @@ class WatchListSerializer(serializers.ModelSerializer):
 
     
 class StreamPlatFormSerializer(serializers.ModelSerializer):
+    watchlist = serializers.StringRelatedField(many=True)
     class Meta:
         model = StreamPlatForm
         fields = "__all__"
