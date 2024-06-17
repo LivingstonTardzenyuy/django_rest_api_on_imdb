@@ -1,13 +1,11 @@
 from rest_framework import serializers
-from watchlist_app.models import Movie 
+from watchlist_app.models import WatchList, StreamPlatForm 
 
 
-class MovieSerializer(serializers.ModelSerializer):
-    len_name = serializers.SerializerMethodField()
-    
-    
+class WatchListSerializer(serializers.ModelSerializer):
+        
     class Meta:
-        model = Movie
+        model = WatchList
         fields = "__all__"
         # exclude = ['id', 'active']
 
@@ -15,10 +13,19 @@ class MovieSerializer(serializers.ModelSerializer):
         if object['name'] == object['description']:
             raise serializers.ValidationError('Name should be diferent from description')
         return object
+
     
-    #the Object allow us to access all the attributes of the movie object
-    def get_len_name(self, object):
-        return len(object.name)
+class StreamPlatFormSerializer(serializers.ModelSerializer):
+    watchlist = serializers.StringRelatedField(many=True)
+    class Meta:
+        model = StreamPlatForm
+        fields = "__all__"
+        # exclude = ['id', 'active']
+    
+    
+    
+    
+    
     
 # def name_length(value):
 #     if len(value) < 5 or len(value) > 50:
