@@ -10,13 +10,14 @@ class WatchListSerializer(serializers.ModelSerializer):
         # exclude = ['id', 'active']
 
     def validate(self, object):
-        if object['name'] == object['description']:
+        if object['title'] == object['description']:
             raise serializers.ValidationError('Name should be diferent from description')
         return object
 
     
 class StreamPlatFormSerializer(serializers.ModelSerializer):
     watchlist = serializers.StringRelatedField(many=True)
+    # watchlist = WatchListSerializer(many =True, read_only = True)
     class Meta:
         model = StreamPlatForm
         fields = "__all__"
