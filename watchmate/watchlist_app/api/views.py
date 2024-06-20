@@ -4,13 +4,27 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework import mixins
 
+class ReviewList(mixins.ListModelMixin,
+                 mixins.ListModelMixin,
+                 generics.GenericAPIView):
+    
+    queryset = Reviews.objects.all()
+    serializer = ReviewSerializer
 
-
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
 class StreamPlatFormAV(APIView):
     def get(self, request):
         streamPlatForm = StreamPlatForm.objects.all()
-        serializer = StreamPlatFormSerializer(streamPlatForm, many=True)
+        serializer = StreamPlatFormSerializer(
+            streamPlatForm, many=True)
         return Response(serializer.data, status = status.HTTP_200_OK)
     
     def post(self, request, format = None):
@@ -61,13 +75,7 @@ class StreamPlatFormDetails(APIView):
     
     
     
-    
-    
-    
-    
-    
-    
-    
+
     
 
 class WatchListListAV(APIView):

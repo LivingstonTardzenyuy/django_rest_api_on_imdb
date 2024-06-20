@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class StreamPlatForm(models.Model):
     name = models.CharField(max_length=50)
@@ -9,7 +9,6 @@ class StreamPlatForm(models.Model):
     def __str__(self):
         return self.name
     
-# Create your models here.
 class WatchList(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(max_length=200)
@@ -21,3 +20,9 @@ class WatchList(models.Model):
     
     def __str__(self):
         return self.title
+    
+
+class Review(models.Model):
+    title = models.CharField(max_length=100)
+    rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
