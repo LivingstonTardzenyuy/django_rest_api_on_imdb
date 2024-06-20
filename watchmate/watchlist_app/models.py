@@ -22,7 +22,15 @@ class WatchList(models.Model):
         return self.title
     
 
-class Review(models.Model):
+class Reviews(models.Model):
     title = models.CharField(max_length=100)
     rating = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)])
+    description = models.CharField(max_length=200, null=True)
+    update = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+    watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews')
+    
+    def __str__(self):
+        return self.watchlist.title + " - " + str(self.rating)

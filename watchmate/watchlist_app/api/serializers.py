@@ -1,9 +1,16 @@
 from rest_framework import serializers
-from watchlist_app.models import WatchList, StreamPlatForm 
+from watchlist_app.models import WatchList, StreamPlatForm, Reviews
 
+    
+class ReviewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reviews
+        fields = "__all__"
+        
 
 class WatchListSerializer(serializers.ModelSerializer):
-        
+    
+    reviews = ReviewsSerializer(read_only=True, many = True)   
     class Meta:
         model = WatchList
         fields = "__all__"
@@ -23,6 +30,4 @@ class StreamPlatFormSerializer(serializers.ModelSerializer):
         model = StreamPlatForm
         fields = "__all__"
         # exclude = ['id', 'active']
-    
-    
     
