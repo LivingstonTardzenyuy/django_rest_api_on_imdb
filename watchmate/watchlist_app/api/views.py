@@ -8,11 +8,19 @@ from rest_framework import generics
 from rest_framework import mixins
 
 
-class ReviewList(generics.ListCreateAPIView):
-    queryset = Reviews.objects.all()
+class ReviewList(generics.ListCreateAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
 
+    def get_queryset(self):
+        pk = self.kwargs['pk']   #pk of the current user
+        queryset = Reviews.objects.filter(watchlist = pk)
+        return queryset
 
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Reviews.objects.all()
+    serializer_class = ReviewsSerializer
+    
+    
 # class ReviewList(mixins.ListModelMixin,
 #                  mixins.CreateModelMixin,
 #                  generics.GenericAPIView):
