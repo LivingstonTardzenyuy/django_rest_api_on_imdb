@@ -7,25 +7,47 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import mixins
 
-class ReviewList(mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 generics.GenericAPIView):
-    
-    queryset = Reviews.objects.all()
+
+class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def get_queryset(self):
+        pk = self.kwargs['pk']   #pk of the current user
+        queryset = Reviews.objects.filter(watchlist = pk)
+        return queryset
 
-class ReviewDetails(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class ReviewCreate(generics.CreateAPIView):
+    serializer_class = ReviewsSerializer
+    def perform_create(self, serializer):
+        pk = self.kwargs['pk']
+        queryset = WatchList.objects.filter(pk = pk)
+        
+        
+    
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
     
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+    
+# class ReviewList(mixins.ListModelMixin,
+#                  mixins.CreateModelMixin,
+#                  generics.GenericAPIView):
+    
+#     queryset = Reviews.objects.all()
+#     serializer_class = ReviewsSerializer
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+    
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
+
+# class ReviewDetails(mixins.RetrieveModelMixin, generics.GenericAPIView):
+#     queryset = Reviews.objects.all()
+#     serializer_class = ReviewsSerializer
+    
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
     
 class StreamPlatFormAV(APIView):
     def get(self, request):
