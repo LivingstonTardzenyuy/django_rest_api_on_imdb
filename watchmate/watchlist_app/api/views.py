@@ -19,11 +19,11 @@ class ReviewList(generics.ListAPIView):   #Getting user specific reviews
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewsSerializer
     def perform_create(self, serializer):
-        pk = self.kwargs['pk']
-        queryset = WatchList.objects.filter(pk = pk)
+        pk = self.kwargs['pk']      
+        watchlist_id = WatchList.objects.get(pk=pk)   # get the ID of the watchlist
+        return serializer.save(watchlist = watchlist_id)
         
         
-    
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer

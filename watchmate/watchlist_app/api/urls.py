@@ -14,6 +14,15 @@ urlpatterns = [
     
     path('stream/<int:pk>/review', ReviewList.as_view(), name = 'review-list'),
     path('stream/<int:pk>/review-create', ReviewCreate.as_view(), name = 'review-list'),
-
     path('stream/review/<int:pk>', ReviewDetails.as_view(), name='reviews-retrive'),    
 ]
+
+
+
+class ReviewCreate(generics.CreateAPIView):
+    serializer_class = ReviewsSerializer
+    
+    def perform_create(self, serializer):
+        pk = self.kwargs['pk']
+        watchlist_id = WatchList.objects.get(pk=pk)
+        return serializer.save(watchlist = watchlist_id)
