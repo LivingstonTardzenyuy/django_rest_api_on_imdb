@@ -59,8 +59,10 @@ class StreamPlatFormV(viewsets.ViewSet):
     
     def retrieve(self,request, pk=None):
         queryset = StreamPlatForm.objects.all()
-        stramPlatForm = get_object_or_404(queryset, pk=pk)
-        return Response(StreamPlatForm.data, status =status.HTTP_200_OK)
+        streamPlatForm = get_object_or_404(queryset, pk=pk)
+        streamSerializer = StreamPlatFormSerializer(streamPlatForm)
+        return Response(streamSerializer.data, status =status.HTTP_200_OK)
+    
     # def post(self, request, format = None):
     #     serializer = StreamPlatFormSerializer(data = request.data)
     #     if serializer.is_valid():
