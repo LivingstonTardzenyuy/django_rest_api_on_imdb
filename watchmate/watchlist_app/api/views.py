@@ -6,7 +6,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import mixins
-
+from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
 
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
@@ -19,35 +20,40 @@ class ReviewList(generics.ListAPIView):   #Getting user specific reviews
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewsSerializer
     def perform_create(self, serializer):
-        pk = self.kwargs['pk']
-        queryset = WatchList.objects.filter(pk = pk)
+        pk = self.kwargs['pk']      
+        watchlist_id = WatchList.objects.get(pk=pk)   # get the ID of the watchlist
+        return serializer.save(watchlist = watchlist_id)
         
         
-    
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
-    
-    
-# class ReviewList(mixins.ListModelMixin,
-#                  mixins.CreateModelMixin,
-#                  generics.GenericAPIView):
-    
-#     queryset = Reviews.objects.all()
-#     serializer_class = ReviewsSerializer
 
-#     def get(self, request, *args, **kwargs):
-#         return self.list(request, *args, **kwargs)
+class StreamPlatFormV(viewsets.ViewSet):
+    def list(self, request):
+        queryset = StreamPlatForm.objects.all()
+        serializer = StreamPlatFormSerializer(queryset, many=True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
     
-#     def post(self, request, *args, **kwargs):
-#         return self.create(request, *args, **kwargs)
-
-# class ReviewDetails(mixins.RetrieveModelMixin, generics.GenericAPIView):
-#     queryset = Reviews.objects.all()
-#     serializer_class = ReviewsSerializer
+    def retrieve(self,request, pk=None):
+        queryset = StreamPlatForm.objects.all()
+        streamPlatForm = get_object_or_404(queryset, pk=pk)
+        streamSerializer = StreamPlatFormSerializer(streamPlatForm)
+        return Response(streamSerializer.data, status =status.HTTP_200_OK)
     
-#     def get(self, request, *args, **kwargs):
-#         return self.retrieve(request, *args, **kwargs)
+    def create(self, request):
+        serializer = StreamPlatFormSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+    def destroy(self, request, pk=None):
+        streamPlatForm = StreamPlatForm.objects.all()
+        streamPlatFormDetail = get_object_or_404(streamPlatForm, pk=pk)
+        streamPlatFormDetail.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
+        
     
 class StreamPlatFormAV(APIView):
     def get(self, request):
@@ -95,15 +101,6 @@ class StreamPlatFormDetails(APIView):
         streamPlatForm.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)        
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     
 
