@@ -8,8 +8,13 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
+
 
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
+    permission_classes =[IsAuthenticated]
     serializer_class = ReviewsSerializer
 
     def get_queryset(self):
@@ -22,10 +27,19 @@ class ReviewCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         pk = self.kwargs['pk']      
         watchlist_id = WatchList.objects.get(pk=pk)   # get the ID of the watchlist
-        return serializer.save(watchlist = watchlist_id)
+       
+        user_review = self.request.user       
+        if Reviews.objects.filter(watchlist = watchlist_id, review_user=user_review).exists():
+            raise ValidationError('You have already Reviewed')
+        else:
+            return serializer.save(watchlist = watchlist_id, review_user = user_review)
         
+    def get_queryset(self):
+        return Reviews.objects.all()
+    
         
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
 
@@ -54,6 +68,15 @@ class StreamPlatFormV(viewsets.ViewSet):
         streamPlatFormDetail.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
         
+    def update(self, request, pk=None):
+        stramPlatForm = StreamPlatForm.objects.all()
+        streamPlatformDetail = get_object_or_404(stramPlatForm, pk=pk)
+        serializer = StreamPlatFormSerializer(streamPlatformDetail, data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
     
 class StreamPlatFormAV(APIView):
     def get(self, request):
