@@ -11,10 +11,10 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
-
+from .permissions import AdminUserOrReadOnly 
 
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
-    permission_classes =[IsAuthenticated]
+    permission_classes =[IsAuthenticated]   
     serializer_class = ReviewsSerializer
 
     def get_queryset(self):
