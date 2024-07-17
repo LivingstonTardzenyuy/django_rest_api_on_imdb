@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'watchlist_app',
+    'users',
     'rest_framework',
     'rest_framework.authtoken',
-]
+    
+]    
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
