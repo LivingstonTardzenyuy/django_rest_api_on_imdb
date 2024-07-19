@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.password_validation import validate_password
+
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password_confirmation = serializers.CharField(
@@ -43,4 +47,32 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
+        
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True)
+    new_password_confirmation = serializers.CharField(required=True, write_only=True)
+    
+    
+    # Field level validation checking if old password match.
+    def validate_old_password(self, value):
+        user = self.context['request'].user 
+        if not user.check_password(value):
+            raise serializers.ValidationError('Old Password Do not match')
+        return value
+    
+    # Validating object 
+    def validate(self, data):
+        if data['new_password'] != data['new_password_confirmation']:
+            raise serializers.ValidationError(_("The two password fields didn't match."))
+        validate_password(data['new_password'], self.context['request'].user)
+        return data
+    
+    def save(self, **kwargs):
+        user = self.context['request'].user 
+        user.set_password(self.validated_data['new_password'])  
+        user.save()
+        return user 
+        
         
