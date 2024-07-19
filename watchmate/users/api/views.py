@@ -10,10 +10,24 @@ from rest_framework.authtoken.models import Token
 def registration_view(request):
     if request.method == 'POST':
         serializer = RegistrationSerializer(data = request.data)
-        if serializer.is_valid():
-            response = {}
+        
+        data = {}
+        if serializer.is_valid():    
+            account = serializer.save()
+            data['response'] = "Registration Successful!"
+            data['username'] = account.username
+            data['email'] = account.email
+            token = Token.objects.get(user=account).key
+            data['token'] = token 
             
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)      
+        else:
+            data =serializer.errors
+        return Response(data)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'],)
+def logout(request):
+    if request.method == 'POST':
+        request.user.auth_token.delete()
+        return Response(status = status.HTTP_200_OK)
+    
