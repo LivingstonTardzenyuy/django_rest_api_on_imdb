@@ -138,6 +138,7 @@ class StreamPlatFormDetails(APIView):
     
 
 class WatchListListAV(APIView):
+    permission_classes =[AdminUserOrReadOnly]
     def get(self, request, format=None):
         movies = WatchList.objects.all()
         serializer = WatchListSerializer(movies, many=True)
@@ -153,6 +154,7 @@ class WatchListListAV(APIView):
 
 
 class WatchListDetailsAV(APIView):
+    permission_classes = [AdminUserOrReadOnly]
     def get(self, request, pk, format=None):
         try:
             movie = WatchList.objects.get(pk=pk)
