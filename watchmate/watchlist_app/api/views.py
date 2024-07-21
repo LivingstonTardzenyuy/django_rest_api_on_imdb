@@ -11,10 +11,9 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
-from .permissions import AdminUserOrReadOnly, ReviewUserOrReadOnly 
+from .permissions import AdminUserOrReadOnly, IsReviewUserOrReadOnly 
 
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
-    permission_classes =[IsAuthenticated]   
     serializer_class = ReviewsSerializer
 
     def get_queryset(self):
@@ -23,6 +22,7 @@ class ReviewList(generics.ListAPIView):   #Getting user specific reviews
         return queryset
 
 class ReviewCreate(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = ReviewsSerializer
     def perform_create(self, serializer):
         pk = self.kwargs['pk']      
@@ -49,7 +49,7 @@ class ReviewCreate(generics.CreateAPIView):
     
         
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [ReviewUserOrReadOnly]
+    permission_classes = [IsReviewUserOrReadOnly]
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
 
