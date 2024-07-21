@@ -29,7 +29,7 @@ class Reviews(models.Model):
     title = models.CharField(max_length=100)
     rating = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)])
-    description = models.CharField(max_length=200, null=True)
+    description = models.CharField(max_length=200)
     update = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
@@ -37,3 +37,4 @@ class Reviews(models.Model):
     
     def __str__(self):
         return self.title + " - " + str(self.rating)
+    
