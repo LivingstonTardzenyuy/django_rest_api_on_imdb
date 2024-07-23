@@ -9,7 +9,7 @@ class AdminUserOrReadOnly(permissions.BasePermission):
         return bool(request.user.is_superuser and request.user)
     
     
-class ReviewUserOrReadOnly(permissions.BasePermission):
+class IsReviewUserOrReadOnly(permissions.BasePermission):
     
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
