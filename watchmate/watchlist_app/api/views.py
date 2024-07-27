@@ -12,10 +12,11 @@ from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 from .permissions import AdminUserOrReadOnly, IsReviewUserOrReadOnly 
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+
 
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
-
     def get_queryset(self):
         pk = self.kwargs['pk']   #pk of the current user
         queryset = Reviews.objects.filter(watchlist = pk)
@@ -49,6 +50,7 @@ class ReviewCreate(generics.CreateAPIView):
     
         
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     permission_classes = [IsReviewUserOrReadOnly]
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
