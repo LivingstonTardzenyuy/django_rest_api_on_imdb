@@ -13,10 +13,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 from .permissions import AdminUserOrReadOnly, IsReviewUserOrReadOnly 
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
 
 
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
+    throttle_classes = [ReviewListThrottle, AnonRateThrottle]
     def get_queryset(self):
         pk = self.kwargs['pk']   #pk of the current user
         queryset = Reviews.objects.filter(watchlist = pk)
@@ -25,6 +27,7 @@ class ReviewList(generics.ListAPIView):   #Getting user specific reviews
 class ReviewCreate(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReviewsSerializer
+    throttle_classes = [ReviewCreateThrottle]
     def perform_create(self, serializer):
         pk = self.kwargs['pk']      
         watchlist_id = WatchList.objects.get(pk=pk)   # get the ID of the watchlist
