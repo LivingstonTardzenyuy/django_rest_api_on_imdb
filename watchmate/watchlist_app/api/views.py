@@ -16,6 +16,14 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
 
 
+class ReviewsUser(viewsets.ViewSet):
+    def list(self, request, username=None):
+        username = self.kwargs['username']  
+        queryset = Reviews.objects.filter(review_user__username = username)
+        serializer = ReviewsSerializer(queryset, many=True )
+        return Response(serializer.data)
+        
+        
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
     throttle_classes = [ReviewListThrottle, AnonRateThrottle]
