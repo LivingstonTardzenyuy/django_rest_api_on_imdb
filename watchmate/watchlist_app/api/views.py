@@ -14,9 +14,11 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthentic
 from .permissions import AdminUserOrReadOnly, IsReviewUserOrReadOnly 
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ReviewsUser(viewsets.ViewSet):
+    filter_backends = [DjangoFilterBackend]
     def list(self, request):
         username = self.request.query_params.get('username')
         if username:
@@ -29,6 +31,9 @@ class ReviewsUser(viewsets.ViewSet):
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
     throttle_classes = [ReviewListThrottle, AnonRateThrottle]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['active', 'review_user__username']
+
     def get_queryset(self):
         pk = self.kwargs['pk']   #pk of the current user
         queryset = Reviews.objects.filter(watchlist = pk)
@@ -150,8 +155,12 @@ class StreamPlatFormDetails(APIView):
         return Response(status = status.HTTP_204_NO_CONTENT)        
 
 
-    
-
+class WatchListSearch(mixins.ListModelMixin, viewsets.GenericViewSet):
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', 'active']
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    # return Response(serializer_class.data)
 class WatchListListAV(APIView):
     permission_classes =[AdminUserOrReadOnly]
     def get(self, request, format=None):

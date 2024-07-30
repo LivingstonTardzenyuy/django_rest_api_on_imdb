@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'django_filters',
     
 ]    
 
@@ -148,7 +149,7 @@ REST_FRAMEWORK = {
     #     'rest_framework.throttling.UserRateThrottle'
     # ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '2/day',
+        'anon': '10/day',
         'user': '5/day',
         'review-create': '2/day',
         'review-list': '10/day',
