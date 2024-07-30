@@ -17,12 +17,14 @@ from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottl
 
 
 class ReviewsUser(viewsets.ViewSet):
-    def list(self, request, username=None):
-        username = self.kwargs['username']  
-        queryset = Reviews.objects.filter(review_user__username = username)
-        serializer = ReviewsSerializer(queryset, many=True )
-        return Response(serializer.data)
+    def list(self, request):
+        username = self.request.query_params.get('username')
+        if username:
         
+            queryset = Reviews.objects.filter(review_user__username = username)
+            serializer = ReviewsSerializer(queryset, many=True )
+            return Response(serializer.data)
+        return Response('error', 'Username parameter is required', status = status.HTTP_400_BAD_REQUEST)
         
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer

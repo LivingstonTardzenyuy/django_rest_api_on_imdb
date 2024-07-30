@@ -19,7 +19,7 @@ urlpatterns = [
     path('<int:pk>/review', ReviewList.as_view(), name = 'review-list'),
     path('<int:pk>/review-create', ReviewCreate.as_view(), name = 'review-list'),
     path('review/<int:pk>', ReviewDetails.as_view(), name='reviews-retrive'),    
-    path('reviews/<str:username>/', ReviewsUser.as_view({'get': 'list'}), name='review-user'),
+    path('reviews/', ReviewsUser.as_view({'get': 'list'}), name='review-user'),
     
     path('', include(router.urls)),
 
