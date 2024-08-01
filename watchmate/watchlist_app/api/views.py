@@ -158,8 +158,8 @@ class StreamPlatFormDetails(APIView):
 
 
 class WatchListSearch(mixins.ListModelMixin, viewsets.GenericViewSet):
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['^title', 'platForm__name']
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['avg_rating']
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
     # return Response(serializer_class.data)
