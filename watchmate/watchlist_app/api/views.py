@@ -15,19 +15,21 @@ from .permissions import AdminUserOrReadOnly, IsReviewUserOrReadOnly
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 
-class ReviewsUser(viewsets.ViewSet):
+class ReviewsUser(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
-    def list(self, request):
-        username = self.request.query_params.get('username')
-        if username:
-        
-            queryset = Reviews.objects.filter(review_user__username = username)
-            serializer = ReviewsSerializer(queryset, many=True )
-            return Response(serializer.data)
-        return Response('error', 'Username parameter is required', status = status.HTTP_400_BAD_REQUEST)
-        
+    filterset_fields = ['rating', 'active', 'review_user__username']
+    serializer_class = ReviewsSerializer
+    
+    def get_queryset(self):
+        queryset = Reviews.objects.all()
+        # username = self.request.query_params.get('username')
+        # if username is not None:
+        #     queryset = queryset.filter(review_user__username=username)
+        return queryset
+    
 class ReviewList(generics.ListAPIView):   #Getting user specific reviews
     serializer_class = ReviewsSerializer
     throttle_classes = [ReviewListThrottle, AnonRateThrottle]
@@ -156,11 +158,12 @@ class StreamPlatFormDetails(APIView):
 
 
 class WatchListSearch(mixins.ListModelMixin, viewsets.GenericViewSet):
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['title', 'active']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^title', 'platForm__name']
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
     # return Response(serializer_class.data)
+    
 class WatchListListAV(APIView):
     permission_classes =[AdminUserOrReadOnly]
     def get(self, request, format=None):
