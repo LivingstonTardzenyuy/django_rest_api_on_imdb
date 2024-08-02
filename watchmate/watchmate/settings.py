@@ -144,21 +144,23 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     'rest_framework.throttling.AnonRateThrottle',
-    #     'rest_framework.throttling.UserRateThrottle'
-    # ],
+    
     'DEFAULT_THROTTLE_RATES': {
         'anon': '10/day',
         'user': '5/day',
         'review-create': '2/day',
         'review-list': '10/day',
-    }
+    },
+    
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 3
 }
+
+
 
 SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     
 }
