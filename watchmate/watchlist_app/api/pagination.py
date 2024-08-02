@@ -1,6 +1,6 @@
-from pagination import PageNumberPagination
+from rest_framework import PageNumberPagination
 
-class LargeResultsSetPagination(PageNumberPagination):
+class WatchListPagination(PageNumberPagination):
     page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 10000
