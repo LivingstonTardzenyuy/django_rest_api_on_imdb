@@ -16,6 +16,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.pagination import LimitOffsetPagination
 
 
 class ReviewsUser(generics.ListAPIView):
@@ -164,20 +165,41 @@ class WatchListSearch(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = WatchListSerializer
     # return Response(serializer_class.data)
     
-class WatchListListAV(APIView):
-    permission_classes =[AdminUserOrReadOnly]
-    def get(self, request, format=None):
-        movies = WatchList.objects.all()
-        serializer = WatchListSerializer(movies, many=True)
-        return Response(serializer.data)
     
-    def post(self, request, format=None):
+class WatchListListAV(viewsets.ViewSet):
+    permission_classes =[AdminUserOrReadOnly]
+    def list(self, request):
+        movies = WatchList.objects.all()
+        # serializer = WatchListSerializer(movies, many = True)
+        # return Response(serializer.data, status = status.HTTP_200_OK)
+        paginator = LimitOffsetPagination()
+        paginated_movies = paginator.paginate_queryset(movies, request)
+        
+        serializer = WatchListSerializer(paginated_movies, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    
+    def create(self, request):
         serializer = WatchListSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+     
+# class WatchListListAV(APIView):
+#     permission_classes =[AdminUserOrReadOnly]
+#     def get(self, request, format=None):
+#         movies = WatchList.objects.all()
+#         serializer = WatchListSerializer(movies, many=True)
+#         return Response(serializer.data)
+    
+#     def post(self, request, format=None):
+#         serializer = WatchListSerializer(data = request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status = status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
 class WatchListDetailsAV(APIView):
