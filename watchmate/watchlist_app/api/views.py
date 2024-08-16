@@ -18,7 +18,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
 
-
+ 
 class ReviewsUser(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['rating', 'active', 'review_user__username']
@@ -77,6 +77,7 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewsSerializer
 
 class StreamPlatFormV(viewsets.ViewSet):
+    permission_classes = [IsAdminUser]
     def list(self, request):
         queryset = StreamPlatForm.objects.all()
         serializer = StreamPlatFormSerializer(queryset, many=True)
