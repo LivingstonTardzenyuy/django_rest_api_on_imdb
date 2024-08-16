@@ -14,7 +14,7 @@ class StreamPlatFormTestCase(APITestCase):
             username = 'example',
             password = 'Password@123'
         )
-        self.token = Token.objects.get(user__username = self.user)
+        self.token, created = Token.objects.get_or_create(user = self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
     
     def test_streamplatform_create(self):
