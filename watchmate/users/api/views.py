@@ -67,7 +67,7 @@ def registration_view_jwt(request):
             data['email'] = account.email
             data['access_token'] = str(refresh.access_token)
             data['refresh_token'] = str(refresh)
-            return Response(data)
+            return Response(data, status = status.HTTP_201_CREATED)
         else:
             data = serializer.errors 
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
