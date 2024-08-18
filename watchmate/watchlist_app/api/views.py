@@ -77,7 +77,7 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewsSerializer
 
 class StreamPlatFormV(viewsets.ViewSet):
-    permission_classes = [IsAdminUser]
+    permission_classes = [AdminUserOrReadOnly]
     def list(self, request):
         queryset = StreamPlatForm.objects.all()
         serializer = StreamPlatFormSerializer(queryset, many=True)
